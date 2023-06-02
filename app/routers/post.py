@@ -36,10 +36,14 @@ def create_post(post : schemas.PostCreate, db: Session = Depends(get_db), curren
 
 #READ
 @router.get("/", response_model=List[schemas.Post])
-def root(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+def post(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     # cursor.execute("""SELECT * FROM posts""")
     # posts = cursor.fetchall()
     posts = db.query(models.Post).all()
+
+    """Getting all post only from user"""
+    # posts = db.query(models.Post).filter(models.Post.owner_id == current_user.id).all()
+
     return posts
 
 
@@ -50,8 +54,14 @@ def get_post(id: int, db: Session = Depends(get_db), current_user: int = Depends
   # cursor.execute(""" SELECT * FROM posts WHERE id = %s """, str(id))
   # post = cursor.fetchone()
   post = db.query(models.Post).filter(models.Post.id == id).first()
+
+  """Getting specific post only from user"""
+  # post = db.query(models.Post).filter(models.Post.id == id).first()
+  # if post.owner_id != current_user.id:
+  #     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Not authorized to perform requested action")
   if not post:
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"details NOT FOUND!")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"NOT FOUND!")
+  
   return post 
 
 
@@ -63,7 +73,11 @@ def update_post(id: int, updated_post:schemas.PostCreate, db: Session = Depends(
   post_query = db.query(models.Post).filter(models.Post.id == id)
   post = post_query.first()
   if post == None:
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"details NOT FOUND!") 
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"NOT FOUND!") 
+  
+  if post.owner_id != current_user.id:
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Not authorized to perform requested action")
+  
   post_query.update(updated_post.dict())
   db.commit()
   return post_query.first()
@@ -74,11 +88,16 @@ def update_post(id: int, updated_post:schemas.PostCreate, db: Session = Depends(
 def delete_post(id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
   # cursor.execute(""" DELETE FROM posts WHERE id = %s RETURNING * """, str(id))
   # deleted_post = cursor.fetchone()
-  delete_post = db.query(models.Post).filter(models.Post.id == id)
+  delete_post_query = db.query(models.Post).filter(models.Post.id == id)
   
+  delete_post = delete_post_query.first()
+
   if delete_post == None:
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"details NOT FOUND!") 
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"NOT FOUND!") 
   
-  delete_post.delete()
+  if delete_post.owner_id != current_user.id:
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Not authorized to perform requested action") 
+  
+  delete_post_query.delete()
   db.commit()
   # return Response(status_code=status.HTTP_204_NO_CONTENT)

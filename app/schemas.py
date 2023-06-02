@@ -29,11 +29,21 @@ class PostBase(BaseModel):
 class PostCreate(PostBase):
     pass
 
+"""Response Schema for USER"""
+class User(BaseModel):
+  id: int
+  email: EmailStr
+  created_at: datetime
+
+  class Config:
+    orm_mode = True
+
 """Response Schema"""
 class Post(PostBase):
   # other attributes inherited from the Postbase Model
   created_at: datetime
   owner_id:int
+  owner:User #refering to the response schema for user, so as to embed user details in the response for a post (in models, owner = relationship(User))
 
   class Config:
     orm_mode = True
@@ -49,14 +59,6 @@ class CreateUsers(BaseUsers):
   pass
 
 
-"""Response Schema"""
-class User(BaseModel):
-  id: int
-  email: EmailStr
-  created_at: datetime
-
-  class Config:
-    orm_mode = True
     
 
 """Resquest Schema for LOGIN"""
