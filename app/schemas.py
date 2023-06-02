@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel, EmailStr
 
 
@@ -32,6 +33,7 @@ class PostCreate(PostBase):
 class Post(PostBase):
   # other attributes inherited from the Postbase Model
   created_at: datetime
+  owner_id:int
 
   class Config:
     orm_mode = True
@@ -61,3 +63,12 @@ class User(BaseModel):
 class UserLogin(BaseModel):
   email:EmailStr
   password:str
+
+
+  """Schema for Token"""
+class Token(BaseModel):
+  access_token:str
+  token_type:str
+
+class TokenData(BaseModel):
+  id:Optional[str] = None
