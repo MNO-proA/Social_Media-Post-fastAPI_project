@@ -3,13 +3,14 @@ from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from fastapi.security import OAuth2PasswordBearer
 from app import models, schemas, database
+from .config import settings
 
 
 # to get a string like this run:
 # openssl rand -hex 32 (use a bash terminal)
-SECRET_KEY = "8232eedbb90bf0ee4c028c705efafb06c261a014b889f57421a13668b43ea20d"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+SECRET_KEY = settings.secret_key
+ALGORITHM = settings.algorithm
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login") #path for authentication (login without the "/")
 
 
@@ -42,5 +43,4 @@ def get_current_user(token: str = Depends (oauth2_scheme), db: database.SessionL
     token =  verify_access_token(token, credentials_exception)
     
     user = db.query(models.User).filter(models.User.id == token.id).first()
-    print(user.email)
     return user

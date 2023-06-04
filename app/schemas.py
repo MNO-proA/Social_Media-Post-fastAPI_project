@@ -41,6 +41,7 @@ class User(BaseModel):
 """Response Schema"""
 class Post(PostBase):
   # other attributes inherited from the Postbase Model
+  id: int
   created_at: datetime
   owner_id:int
   owner:User #refering to the response schema for user, so as to embed user details in the response for a post (in models, owner = relationship(User))

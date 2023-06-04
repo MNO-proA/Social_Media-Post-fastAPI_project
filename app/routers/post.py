@@ -1,9 +1,9 @@
-from typing import List
-from fastapi import Body, FastAPI, status, Response, HTTPException, Depends, APIRouter
+from typing import List, Optional
+from fastapi import status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
 
 from app import oauth2
-from .. database import SessionLocal, get_db
+from .. database import get_db
 from .. import models, schemas
 
 router = APIRouter(
@@ -25,7 +25,6 @@ def create_post(post : schemas.PostCreate, db: Session = Depends(get_db), curren
 
   """SQLALCHEMY"""
   # new_post = models.Post(title=post.title, content=post.content, published=post.published) Key=value <= **dict()
-  print(current_user)
   new_post = models.Post(owner_id=current_user.id, **post.dict())
   db.add(new_post)
   db.commit()
@@ -36,10 +35,10 @@ def create_post(post : schemas.PostCreate, db: Session = Depends(get_db), curren
 
 #READ
 @router.get("/", response_model=List[schemas.Post])
-def post(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+def post(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user), limit: int = 10, skip: int = 0, search: Optional[str] = ""):
     # cursor.execute("""SELECT * FROM posts""")
     # posts = cursor.fetchall()
-    posts = db.query(models.Post).all()
+    posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
 
     """Getting all post only from user"""
     # posts = db.query(models.Post).filter(models.Post.owner_id == current_user.id).all()
