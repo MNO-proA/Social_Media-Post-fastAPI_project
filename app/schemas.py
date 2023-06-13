@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, EmailStr
-
+from pydantic.types import conint
 
 
 #Pydantic Model
@@ -49,6 +49,14 @@ class Post(PostBase):
   class Config:
     orm_mode = True
 
+"""Response for Post_Vote"""
+class PostOut(BaseModel):
+    Post:Post
+    votes:int
+
+    class Config:
+      orm_mode = True
+
 
 """Resquest Schema for USER"""
 class BaseUsers(BaseModel):
@@ -59,8 +67,6 @@ class BaseUsers(BaseModel):
 class CreateUsers(BaseUsers):
   pass
 
-
-    
 
 """Resquest Schema for LOGIN"""
 class UserLogin(BaseModel):
@@ -75,3 +81,10 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
   id:Optional[str] = None
+
+"""Schema for Vote"""
+class Vote(BaseModel):
+  post_id:int 
+  dir:conint(le=1)
+
+  
