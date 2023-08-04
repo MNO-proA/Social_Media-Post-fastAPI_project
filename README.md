@@ -29,7 +29,7 @@ Models
 3. password
 4. created_at
 
-   #Vote
+  #Vote
 1. post_id
 2. user_id
 
