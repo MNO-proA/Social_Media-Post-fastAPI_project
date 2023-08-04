@@ -1,8 +1,8 @@
 # Social_Media_Text_Posts_API-fastAPI_project
-A CRUD API with JWT authentication and authorization
+A CRUD API with JWT authentication and authorization. 
 As the name implies, this type of posts only contain text and they are the most basic form of social media content.
-As users sign up, they are added to the database
-As they sign in, they are given JWT token with an expiring time 30mins from the time of login. JWT contains user information for which users can update and delete only their posts and not other users
+As users sign up, they are added to the database. 
+As they sign in, they are given JWT token with an expiring time 30mins from the time of login. JWT contains user information for which users can update and delete only their posts and not other users. 
 Creating, Reading, Updating and Deleting posts(CRUD) needs authentication from the user before these operations can be done. 
 You need to be authenticated to Create and Read but you need to be authorised as the owner of the post to update and delete a post.
 Users can also vote on other users posts, because access is given for users to read other users post.
