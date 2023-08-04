@@ -8,11 +8,13 @@ You need to be authenticated to Create and Read but you need to be authorised as
 Users can also vote on other users posts, because access is given for users to read other users post.
 
 Database Tables
+
 1. Posts
 2. Users
 3. Votes
 
 Models
+
   #Post
 1. id
 2. title
