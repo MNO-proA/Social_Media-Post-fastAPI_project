@@ -21,11 +21,11 @@ router = APIRouter(
 #CREATE
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model= schemas.Post)
 def create_post(post : schemas.PostCreate, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
-  # cursor.execute(""" INSERT INTO posts (title, content, published) VALUES(%s, %s, %s) RETURNING * """,(post.title, post.content, post.published)) #Parameterized Query or Sanitized Query(Query Parameterization) =  against SQL Injections
+  # cursor.execute(""" INSERT INTO posts (title, content, published) VALUES(%s, %s, %s) RETURNING * """,(post.title, post.content, post.published)) 
+  # Parameterized Query or Sanitized Query(Query Parameterization) =  against SQL Injections
   # new_post = cursor.fetchone()
   # conn.commit()
 
-  """SQLALCHEMY"""
   # new_post = models.Post(title=post.title, content=post.content, published=post.published) Key=value <= **dict()
   new_post = models.Post(owner_id=current_user.id, **post.dict())
   db.add(new_post)
