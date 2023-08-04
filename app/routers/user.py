@@ -1,8 +1,10 @@
 from typing import List
 from fastapi import Body, FastAPI, status, Response, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
+
+from ..schemas import schemas
 from .. database import SessionLocal, get_db
-from .. import models, schemas, utils
+from .. import models, utils
 
 router = APIRouter(
   prefix="/users",

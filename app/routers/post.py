@@ -4,8 +4,9 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app import oauth2
+from ..schemas import schemas
 from .. database import get_db
-from .. import models, schemas
+from .. import models
 
 router = APIRouter(
   prefix="/posts",
