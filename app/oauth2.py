@@ -2,8 +2,7 @@ from fastapi import Depends, HTTPException, status
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from fastapi.security import OAuth2PasswordBearer
-from app import models, database
-from app.schemas import schemas
+from app import models, schemas, database
 from .config import settings
 
 
@@ -34,9 +33,8 @@ def verify_access_token(token:str, credentials_exception):
         raise credentials_exception
     return token_data #return the user's data
 
-#to get the current user, it depends on the token received from the login route, the password bearer (current_user) can be known from the token decoded
+#to get the current user, its depends on the token received from the login route, the password bearer (current_user) can be known from the token decoded
 def get_current_user(token: str = Depends (oauth2_scheme), db: database.SessionLocal = Depends(database.get_db)):
-    
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",

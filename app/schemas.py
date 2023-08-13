@@ -1,10 +1,8 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import Field, ConfigDict, BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr
 from pydantic.types import conint
-from typing_extensions import Annotated
 
-# https://github.com/pydantic/bump-pydantic
 
 #Pydantic Model
 # User sending data to us
@@ -27,7 +25,7 @@ class PostBase(BaseModel):
 
   """Schema/Pydantic Models define the structure of a request and response ('Agreement/law all must abide'). This ensure that when a user wants to create a post, the request will only go through if it has a 'title' and 'content' in the body. Pydantic performs validation to make sure that all the needed requirements are satisfied (all the data fields including data types in the request match up to what we want) mainly making sure request and response are shaped in a specific way"""
 
-"""Request Schema for POST"""
+"""Resquest Schema for POST"""
 class PostCreate(PostBase):
     pass
 
@@ -36,7 +34,9 @@ class User(BaseModel):
   id: int
   email: EmailStr
   created_at: datetime
-  model_config = ConfigDict(from_attributes=True)
+
+  class Config:
+    orm_mode = True
 
 """Response Schema"""
 class Post(PostBase):
@@ -45,13 +45,17 @@ class Post(PostBase):
   created_at: datetime
   owner_id:int
   owner:User #refering to the response schema for user, so as to embed user details in the response for a post (in models, owner = relationship(User))
-  model_config = ConfigDict(from_attributes=True)
+
+  class Config:
+    orm_mode = True
 
 """Response for Post_Vote"""
 class PostOut(BaseModel):
     Post:Post
     votes:int
-    model_config = ConfigDict(from_attributes=True)
+
+    class Config:
+      orm_mode = True
 
 
 """Resquest Schema for USER"""
@@ -81,6 +85,6 @@ class TokenData(BaseModel):
 """Schema for Vote"""
 class Vote(BaseModel):
   post_id:int 
-  dir:Annotated[int, Field(le=1)]
+  dir:conint(le=1)
 
   
